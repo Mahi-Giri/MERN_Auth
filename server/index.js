@@ -21,5 +21,17 @@ app.listen(process.env.PORT, () => {
     console.log(`Server running on port ${process.env.PORT}`);
 });
 
+// Routings
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/auth", authRouth);
+
+// MiddleWare
+app.use((err, req, res, next) => {
+    const statusCode = err.status || 500;
+    const message = err.message || "Internal Server Error";
+    return res.status(statusCode).json({
+        success: false,
+        statusCode,
+        message,
+    });
+});

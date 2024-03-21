@@ -7,7 +7,7 @@ export const test = (req, res) => {
 };
 
 export const updateUser = async (req, res, next) => {
-    if (req.user._id !== req.params.id) return next(errorHandler(401, "Invalid User"));
+    if (req.user.id !== req.params.id) return next(errorHandler(401, "Invalid User"));
 
     try {
         if (req.body.password) bcrypt.hashSync(req.body.password, 10);

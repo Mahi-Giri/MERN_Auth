@@ -2,7 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 import { app } from "../firebase";
-import { updateUserFailure, updateUserStart, updateUserSuccess } from "../redux/userSlice";
+import {
+    deleteUserFailure,
+    deleteUserStart,
+    deleteUserSuccess,
+    updateUserFailure,
+    updateUserStart,
+    updateUserSuccess,
+} from "../redux/userSlice";
 
 const Profile = () => {
     const { currentUser, loading, error } = useSelector((store) => store.user);
@@ -68,14 +75,11 @@ const Profile = () => {
                 },
                 body: JSON.stringify(formData),
             });
-
             const data = await response.json();
-
             if (data.success === false) {
                 dispatch(updateUserFailure(data));
                 return;
             }
-
             dispatch(updateUserSuccess(data));
             setUpdateSuccess(true);
         } catch (error) {
@@ -83,6 +87,25 @@ const Profile = () => {
             console.error("Server error: " + error);
         }
     };
+
+    const handleDeleteAccount = async () => {
+        try {
+            dispatch(deleteUserStart());
+            const response = await fetch(`/api/v1/user/delete/${currentUser._id}`, {
+                method: "DELETE",
+            });
+            const data = await response.json();
+            if (data.success === false) {
+                dispatch(deleteUserFailure(data));
+                return;
+            }
+            dispatch(deleteUserSuccess(data));
+        } catch (error) {
+            dispatch(deleteUserFailure(error));
+            console.error("Server error: " + error);
+        }
+    };
+
     return (
         <div className="p-3 max-w-lg mx-auto">
             <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -141,7 +164,9 @@ const Profile = () => {
                 </button>
             </form>
             <div className="flex justify-between mt-5">
-                <span className="text-red-500 cursor-pointer">Delete Account</span>
+                <span className="text-red-500 cursor-pointer" onClick={handleDeleteAccount}>
+                    Delete Account
+                </span>
                 <span className="text-red-500 cursor-pointer">Sign Out</span>
             </div>
             <p className="text-red-700 mt-5">{error && "Something went wrong"}</p>

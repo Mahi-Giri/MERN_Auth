@@ -25,7 +25,6 @@ const OAuth = () => {
                 }),
             });
             const data = await response.json();
-            console.log(data);
 
             dispatch(signInSuccess(data));
         } catch (error) {

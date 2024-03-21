@@ -13,6 +13,7 @@
         "reduxjs",
         "Routh",
         "Signin",
+        "signout",
         "Signup",
         "tailwindcss"
     ]
